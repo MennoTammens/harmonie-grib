@@ -8,7 +8,7 @@ import bz2
 import pygrib
 from numpy import sqrt
 
-files = sorted(glob.glob1('work/','*_GB'))
+files = sorted(glob.glob1('work', '*_GB'))
 
 if len(files) != 49:
     print('Verkeerd aantal GRIB-bestanden')
@@ -19,7 +19,9 @@ def writeGribMessage(message, out):
     message['centre'] = 'kwbc'
     out.write(message.tostring())
 
+
 gribout = open('temp.grb', 'wb')
+gribout_wind = open('temp_wind.grb', 'wb')
 
 for file in files:
     grbs = pygrib.open('work/'+file)
@@ -43,16 +45,18 @@ for file in files:
     # U-wind
     msg_u = grbs.select(indicatorOfParameter=33)[0]
     writeGribMessage(msg_u, gribout)
+    writeGribMessage(msg_u, gribout_wind)
     
     # V-wind
     msg_v = grbs.select(indicatorOfParameter=34)[0]
     writeGribMessage(msg_v, gribout)
+    writeGribMessage(msg_v, gribout_wind)
     
     # Precipication Intensity
     msg_ip = grbs.select(indicatorOfParameter=61, level=456)[0]
     msg_ip.typeOfLevel = 'surface'
     msg_ip.level = 0
-    msg_ip.values = msg_ip.values * 3600 # mm/s => mm/h
+    msg_ip.values = msg_ip.values * 3600
     writeGribMessage(msg_ip, gribout)
     
     # Wind gusts
@@ -61,18 +65,28 @@ for file in files:
     msg_ug.values = sqrt(msg_ug.values**2 + msg_vg.values**2)
     msg_ug.indicatorOfParameter = 180
     msg_ug.typeOfLevel = 'surface'
+    msg_ug.level = 0
     writeGribMessage(msg_ug, gribout)
+    writeGribMessage(msg_ug, gribout_wind)
 
 gribout.close()
+gribout_wind.close()
 
 DEVNULL = open(os.devnull, 'wb')
 subprocess.call(['/usr/local/bin/ggrib', 'temp.grb', 'temp_nl.grb', '3.071', '50.748', '7.252', '53.761'], stdout=DEVNULL)
+subprocess.call(['/usr/local/bin/ggrib', 'temp_wind.grb', 'temp_wind_nl.grb', '3.071', '50.748', '7.252', '53.761'], stdout=DEVNULL)
 subprocess.call(['bzip2', 'temp.grb'])
 subprocess.call(['bzip2', 'temp_nl.grb'])
+subprocess.call(['bzip2', 'temp_wind.grb'])
+subprocess.call(['bzip2', 'temp_wind_nl.grb'])
 
 filename = files[0][:-6]+'zygrib.grb.bz2'
 filename_nl = files[0][:-6]+'zygrib_nl.grb.bz2'
-for file in glob.glob('harm36_v1_*.grb.bz2'):
+filename_wind = files[0][:-6]+'zygrib_wind.grb.bz2'
+filename_wind_nl = files[0][:-6]+'zygrib_wind_nl.grb.bz2'
+for file in [f for f in os.listdir('.') if f.startswith('harm36_v1')]:
     os.remove(file)
 os.rename('temp.grb.bz2', filename)
 os.rename('temp_nl.grb.bz2', filename_nl)
+os.rename('temp_wind.grb.bz2', filename_wind)
+os.rename('temp_wind_nl.grb.bz2', filename_wind_nl)
