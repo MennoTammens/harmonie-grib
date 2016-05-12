@@ -75,18 +75,30 @@ gribout_wind.close()
 DEVNULL = open(os.devnull, 'wb')
 subprocess.call(['/usr/local/bin/ggrib', 'temp.grb', 'temp_nl.grb', '3.071', '50.748', '7.252', '53.761'], stdout=DEVNULL)
 subprocess.call(['/usr/local/bin/ggrib', 'temp_wind.grb', 'temp_wind_nl.grb', '3.071', '50.748', '7.252', '53.761'], stdout=DEVNULL)
+subprocess.call(['/usr/local/bin/ggrib', 'temp.grb', 'temp_ijmwad.grb', '4.363', '52.294', '5.903', '53.411'], stdout=DEVNULL)
+subprocess.call(['/usr/local/bin/ggrib', 'temp.grb', 'temp_zld.grb', '2.6', '51.2', '5.0', '52.0'], stdout=DEVNULL)
+subprocess.call(['/usr/local/bin/ggrib', 'temp_wind.grb', 'temp_wind_zld.grb', '2.6', '51.2', '5.0', '52.0'], stdout=DEVNULL)
 subprocess.call(['bzip2', 'temp.grb'])
 subprocess.call(['bzip2', 'temp_nl.grb'])
 subprocess.call(['bzip2', 'temp_wind.grb'])
 subprocess.call(['bzip2', 'temp_wind_nl.grb'])
+subprocess.call(['bzip2', 'temp_zld.grb'])
+subprocess.call(['bzip2', 'temp_wind_zld.grb'])
+subprocess.call(['bzip2', 'temp_ijmwad.grb'])
 
 filename = files[0][:-6]+'zygrib.grb.bz2'
 filename_nl = files[0][:-6]+'zygrib_nl.grb.bz2'
 filename_wind = files[0][:-6]+'zygrib_wind.grb.bz2'
 filename_wind_nl = files[0][:-6]+'zygrib_wind_nl.grb.bz2'
+filename_zld = files[0][:-6]+'zygrib_zld.grb.bz2'
+filename_wind_zld = files[0][:-6]+'zygrib_wind_zld.grb.bz2'
+filename_ijmwad = files[0][:-6]+'zygrib_ijmwad.grb.bz2'
 for file in [f for f in os.listdir('.') if f.startswith('harm36_v1')]:
     os.remove(file)
 os.rename('temp.grb.bz2', filename)
 os.rename('temp_nl.grb.bz2', filename_nl)
 os.rename('temp_wind.grb.bz2', filename_wind)
 os.rename('temp_wind_nl.grb.bz2', filename_wind_nl)
+os.rename('temp_zld.grb.bz2', filename_zld)
+os.rename('temp_wind_zld.grb.bz2', filename_wind_zld)
+os.rename('temp_ijmwad.grb.bz2', filename_ijmwad)
