@@ -7,9 +7,10 @@ Voor meer informatie en discussie, zie dit topic op Zeilersforum: http://zeilers
 
 ## Dependencies
 - Python-module pygrib en de dependencies daarvan (numpy, grib-api, proj, zlib, libpng, jasper, openjpeg)
-in Debian/Ubuntu:
+  in Debian/Ubuntu:
 
+  ```
   sudo apt-get install python-grib
+  ```
 
-- [ggrib](http://www.cpc.ncep.noaa.gov/products/wesley/ggrib.html) voor het verkleinen van het gebied (kan ook zonder, dan moet je de regels met 'temp_nl.grb' en 'filename_nl' weghalen.) 
-
+- [ggrib](http://www.cpc.ncep.noaa.gov/products/wesley/ggrib.html) voor het verkleinen van het gebied (kan ook zonder, dan moet je de regels met 'temp_nl.grb' en 'filename_nl' weghalen.)

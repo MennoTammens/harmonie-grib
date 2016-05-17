@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import division, print_function
 
+import os
 from datetime import datetime
 from ftplib import FTP
 
@@ -23,7 +24,7 @@ def file_list():
         yield {
             'name': item[-1],
             'size': '{}MB'.format(int(int(item[4]) / 1024 / 1024)),
-            'mtime': mtime.replace(year=2016)  # TODO: fix year assumption
+            'mtime': mtime.replace(year=datetime.now().year)
         }
 
 
@@ -31,12 +32,21 @@ def get_file(name):
     ftp.retrbinary('RETR {}'.format(name), open(name, 'wb').write)
 
 
-print('Files available on server: ')
+def mtime(filename):
+    return datetime.fromtimestamp(os.path.getmtime(filename))
+
+
+print('Files available at {}: '.format(FTP_HOST))
 for item in file_list():
     print(' {}: {}'.format(item['name'], item['mtime'].strftime('%Y-%m-%d %H:%M:%S')))
 print()
 
 recent = max(file_list(), key=lambda x: x['mtime'])
-print('Downloading most recent file:', recent['name'], 'size:', recent['size'])
-get_file(recent['name'])
+
+if os.path.isfile(recent['name']) and recent['mtime'] < mtime(recent['name']):
+    print('Skipping download, {} already up to date'.format(recent['name']))
+else:
+    print('Downloading: {name}, size: {size}'.format(**recent))
+
+    get_file(recent['name'])
 print('DONE')
