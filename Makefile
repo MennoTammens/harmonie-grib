@@ -1,5 +1,8 @@
 TMPDIR := work
 
+all: download convert
+
+
 convert:
 	mkdir -p $(TMPDIR)/
 	tar -xf harm36_v1_ned_surface_*.tgz -C $(TMPDIR)
