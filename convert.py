@@ -15,10 +15,10 @@ WORKDIR = 'work/'
 
 # bounds to create sliced versions for:
 BOUNDS = {
-    # label: [sw_corner, ne_corner]
-    'nl': [[50.748, 3.071], [53.761, 7.252]],
-    'ijmwad': [[52.294, 4.363], [53.411, 5.903]],
-    'zeeland': [[51.2, 2.6], [52.0, 5.0]]
+    # label: [sw_corner, ne_corner] in (lng, lat)-order
+    'nl': [[3.071, 50.748], [7.252, 53.761]],
+    'ijmwad': [[4.363, 52.294], [5.903, 53.411]],
+    'zeeland': [[2.6, 51.2], [5.0, 52.0]]
 }
 
 # discover ggrib location
@@ -101,20 +101,25 @@ if __name__ == '__main__':
         subprocess.call(['bzip2', src])
         os.rename(src + '.bz2', dst)
 
+    def bounded_slice(src, name, bounds):
+        dst = filename_fmt.format(name)
+        print('Writing {} to {}'.format(name, dst))
+
+        tmp_filename = 'temp_bounds.grb'
+        cmd = [GGRIB_BIN, src, tmp_filename]
+        cmd.extend(map(str, [bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]]))
+        subprocess.call(cmd)
+
+        compress_rename(tmp_filename, dst)
+
     if GGRIB_BIN is None:
         print('ggrib binary not found, please install by typing `make ggrib`')
     else:
         DEVNULL = open(os.devnull, 'wb')
 
         for name, bounds in BOUNDS.items():
-            out_file = 'temp_{}.grb'.format(name)
-            print('Writing to', out_file)
-
-            cmd = [GGRIB_BIN, 'temp.grb', out_file]
-            cmd.extend(map(str, [bounds[0][1], bounds[0][0], bounds[1][1], bounds[1][0]]))
-
-            subprocess.call(cmd)
-            compress_rename(out_file, filename_fmt.format(name))
+            bounded_slice('temp.grb', name, bounds)
+            bounded_slice('temp_wind.grb', 'wind_' + name, bounds)
 
     compress_rename('temp.grb', filename)
     compress_rename('temp_wind.grb', filename_fmt.format('wind'))

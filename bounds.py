@@ -21,13 +21,13 @@ def geojson_feature(feature_type, coordinates, properties=None, **kwargs):
 def geojson_bounds(bounds, properties=None, **kwargs):
     '''Convert a tuple of (sw, ne)-corners to a geojson polygon'''
 
-    sw_lat, sw_lng = bounds[0]
-    ne_lat, ne_lng = bounds[1]
+    sw_lng, sw_lat = bounds[0]
+    ne_lng, ne_lat = bounds[1]
     return geojson_feature('Polygon', [
         [
-            (sw_lng, sw_lat),
+            bounds[0],
             (sw_lng, ne_lat),
-            (ne_lng, ne_lat),
+            bounds[1],
             (ne_lng, sw_lat)
         ]
     ], properties, **kwargs)
@@ -41,8 +41,11 @@ if __name__ == '__main__':
         with open('{}.geojson'.format(key), 'w') as out:
             json.dump(bounds, out, indent=2)
 
-    with open('all.geojson', 'w') as out:
+    with open('harm36_bounds.geojson', 'w') as out:
         json.dump({
             'type': 'FeatureCollection',
             'features': all_bounds
         }, out, indent=2)
+
+
+    print('Wrote bounds to .geojson files')

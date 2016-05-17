@@ -14,6 +14,9 @@ ggrib:
 
 	cp $(TMPDIR)/Ggrib/ggrib .
 
+bounds:
+	./bounds.py
+
 clean:
 	rm -rf $(TMPDIR)/Ggrib
 	rm -rf $(TMPDIR)/Gribw

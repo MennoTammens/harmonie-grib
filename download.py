@@ -31,15 +31,12 @@ def get_file(name):
     ftp.retrbinary('RETR {}'.format(name), open(name, 'wb').write)
 
 
-recent = max(file_list(), key=lambda x: x['mtime'])
-
-
 print('Files available on server: ')
 for item in file_list():
-    print(item)
+    print(' {}: {}'.format(item['name'], item['mtime'].strftime('%Y-%m-%d %H:%M:%S')))
 print()
 
+recent = max(file_list(), key=lambda x: x['mtime'])
 print('Downloading most recent file:', recent['name'], 'size:', recent['size'])
-
 get_file(recent['name'])
 print('DONE')
