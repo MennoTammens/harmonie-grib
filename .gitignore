@@ -1,7 +1,8 @@
 # harmonie-grib specifics
 work/*
 ggrib
-
+*.geojson
+*.bz2
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
