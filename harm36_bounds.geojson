@@ -1,0 +1,92 @@
+{
+  "type": "FeatureCollection", 
+  "features": [
+    {
+      "geometry": {
+        "type": "Polygon", 
+        "coordinates": [
+          [
+            [
+              4.363, 
+              52.294
+            ], 
+            [
+              4.363, 
+              53.411
+            ], 
+            [
+              5.903, 
+              53.411
+            ], 
+            [
+              5.903, 
+              52.294
+            ]
+          ]
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "name": "ijmwad"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Polygon", 
+        "coordinates": [
+          [
+            [
+              2.6, 
+              51.2
+            ], 
+            [
+              2.6, 
+              52.0
+            ], 
+            [
+              5.0, 
+              52.0
+            ], 
+            [
+              5.0, 
+              51.2
+            ]
+          ]
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "name": "zeeland"
+      }
+    }, 
+    {
+      "geometry": {
+        "type": "Polygon", 
+        "coordinates": [
+          [
+            [
+              3.071, 
+              50.748
+            ], 
+            [
+              3.071, 
+              53.761
+            ], 
+            [
+              7.252, 
+              53.761
+            ], 
+            [
+              7.252, 
+              50.748
+            ]
+          ]
+        ]
+      }, 
+      "type": "Feature", 
+      "properties": {
+        "name": "nl"
+      }
+    }
+  ]
+}
