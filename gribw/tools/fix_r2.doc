@@ -1,0 +1,42 @@
+1/16/2001
+
+   fix_r2 is a tool to fix the GRIB grid definition section (GDS) 
+of the monthly means from the NCEP/DOE Reanalysis.
+
+
+		Compiling fix_r2
+
+1) get the gribw library & sample programs from
+
+	ftp://wesley.wwb.noaa.gov/pub/gribw.tar
+
+2) untar the library
+
+	$ tar -xvf gribw.tar
+
+3) cd to the tar directory
+
+	$ cd gribw
+
+4) make the gribw library
+
+	$ make -f gribwlib.make
+
+5) cd to the tools directory
+
+	$ cd tools
+
+6) make fix_r2
+
+	$ make -f fix_r2.make
+
+
+		Usage
+
+$ fix_r2 old_grib_file new_grib_file
+
+------------------------------------
+Tested on linux and AIX box.  The library has been tested
+on cray, linux, aix, hp, sgi.
+
+

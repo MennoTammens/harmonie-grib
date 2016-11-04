@@ -1,0 +1,55 @@
+Climatology:
+
+    problem: can't describe climatologies very well
+    Kludge:  (not standard)
+         use minutes to store extra information
+
+    /*
+     * convention used by RR
+     *   minute = 0 +  0 => ave of analyses
+     *   minute = 0 + 12 => ave of 3 hour forecasts
+     *   minute = 1 + 12 => ave of 0..3 hour average forecasts
+     *   minute = 2 + 12 => ave of 0..3 hour accumulated forecasts
+     */
+
+    Bits: 2-1
+
+           00  climatology of single time quantities such
+                        as analyses or N hour forecasts
+
+           01  climatology of averages 0-N hour forecasts
+
+           10  climatology of accumulations 0-N hour forecasts
+
+           11  not used
+
+    Bits: 8-3
+           N   integer 0 .. 63
+
+
+   V2
+
+    Bits: 2-1
+           00  climatology of single time quantities such
+                        as analyses or (M+1)*DT hour forecasts
+
+           01  climatology of averages M*DT to (M+1)*DT hour forecasts
+
+           10  climatology of accumulations M*DT to (M+1)*DT hour forecasts
+
+           11  not used
+
+
+    Bits 3-4: DT
+          11  3 hour interval
+          10  6 hour interval
+          01 24 hour interval
+          11    not used
+
+    Bits 8-5: M
+          M  Integer 0 .. 15
+
+
+Comments: V2 is more versatile and is compatible with the RR useage
+
+         

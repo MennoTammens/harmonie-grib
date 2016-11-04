@@ -1,0 +1,28 @@
+   To make the gribw library, type
+
+      make -f gribwlib.make
+
+   Then go to the directory tools and take a look at
+the example program:
+
+      gribify_nmc0.*
+
+
+Gribw(riter) status:
+
+   You are getting a snapshot of my working directory
+and it contains much old code.  Much of the old code
+is for earlier verions of gribw.  For examples of
+code using the current API, look at examples and tools.
+
+   To determine the current API, consult pdstool.h,
+gdstool.h, gribwlib.h and gribw_time.h
+
+   The API for grib reading is very primative and
+insufficient for much useful work.  Routines for
+determining the contents of a grib message need to
+be written.
+
+   A second API was suggested by a Canadian and 
+equivalences a structure with the pds & gds.  More
+useful in reading GRIB data.

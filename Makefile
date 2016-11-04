@@ -12,17 +12,15 @@ download:
 	./download.py
 
 ggrib:
-	wget http://ftp.cpc.ncep.noaa.gov/wd51we/gribw/ggrib/ggrib.tar.gz -O $(TMPDIR)/ggrib.tar.gz
-	tar -xf $(TMPDIR)/ggrib.tar.gz -C $(TMPDIR)
-
-	cp $(TMPDIR)/Ggrib/ggrib .
+	$(MAKE) -C gribw -f gribwlib.make
+	$(MAKE) -C gribw/ggrib -f ggrib.make
+	cp gribw/ggrib/ggrib .
 
 bounds:
 	./bounds.py
 
 clean:
-	rm -rf $(TMPDIR)/Ggrib
-	rm -rf $(TMPDIR)/Gribw
-	rm -rf $(TMPDIR)/ggrib.tar.gz
+	$(MAKE) -C gribw -f gribwlib.make clean
+	rm ggrib
 	rm -rf $(TMPDIR)/harm36_v1_ned_surface_*
 	rm -rf temp.grb

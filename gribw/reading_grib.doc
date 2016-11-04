@@ -1,0 +1,111 @@
+Routines to read GRIB:
+
+
+
+gribw level 0a - C interface
+
+   Uses undecoded sections: pds, gds, bms, bds
+
+       Reading GRIB
+           len_grib = rd_grib_msg(input, pos, &pds, &gds, &bms, &bds);
+
+       int rd_grib_msg(FILE *input, long int pos, unsigned char **pds,
+           unsigned char **gds, unsigned char **bms, unsigned char **bds)
+
+       (status: long-term use)
+
+	INPUT:
+
+	input	= file pointer of GRIB file
+	pos	= byte position of the GRIB message to decode
+		  (starting at byte 0)
+
+	OUTPUT:
+
+	pds	= pointer to PDS
+	gds	= pointer to GDS
+	bms	= pointer to BMS
+	bds	= pointer to BDS
+
+	rd_grib_msg() returns length of grib record
+
+	Note: for efficiency, the pds, gds, bms and bds point to
+	a static buffer allocated by rd_grib_msg.  A subsequent
+	call to rd_grib_msg or rd_grib_rec will change this buffer.  
+        If you need the pds, gds, bms or bds after the next call to 
+        rd_grib_msg or rd_grib_rec, you need to save the section 
+        using cpGRIBsec((char *)section).
+
+
+gribw level 0b - C interface
+
+   Uses binary data, undecoded sections: pds, gds
+
+   C interface:
+       Reading GRIB
+           len_grib = rd_grib_rec(input, pos, &pds, &gds, &data, &ndata);
+
+	   int rd_grib_rec(FILE *input, long int pos, unsigned char **pds,
+		unsigned char **gds, float *data, int *ndata)
+
+	INPUT:
+
+	input	= file pointer of GRIB file
+	pos	= byte position of the GRIB message to decode
+		  (starting at byte 0)
+
+	OUTPUT:
+
+	pds	= pointer to PDS
+	gds	= pointer to GDS
+	data	= pointer to data
+	ndata	= number of points of data (including undefined values)
+
+	rd_grib_rec() returns length of grib record
+
+	Note: for efficiency, the pds, gds point to a static buffers
+        allocated by rd_grib_msg.  "data" points to a static buffer
+        allocated by rd_grib_rec.  Any subsequent calls to rd_grib_msg 
+        or rd_grib_rec will change this buffers.  If you need the pds, 
+        gds, bms, bds, or data to be retained, you must save the data.
+        The pds, gds, bms and bds can be saved using the function
+        cpGRIBsec((char *)section).
+
+
+				Index Files
+
+   The previous routines read the data given a byte position of the grib 
+record.  If you want to read the data sequentially, you can set the byte 
+position to 0, and increment the position by len_grib for each subsequent
+record.  For code, this is often the simplest way to access the data as
+one can use wgrib to rearrange the order of the records very easily.  
+Another way to read the data is in "random" access.  For this method,
+you need an index file.  Rather than choose a binary format, the routine
+scan3 will read a wgrib -s inventory.  Such a inventory can be produced
+by "wgrib -s grib_file >index_file".
+
+    long int scan3(FILE *input, int date, char *variable, char *level);
+
+	INPUT
+
+	FILE *input 	= file pointer to the index file (inventory)
+			  should rewind the file before calling
+			  unless you know the next scan is past
+			  the old scan
+
+	int date	= date code in the inventory
+			  set to 0 to match any date
+	
+    	char *variable	= text string with the variable name in double
+			  quotes, ex "HGT", set to NULL to match any
+			  variable
+
+	char *level	= text string with the level in double quotes,
+			  ex. "500 mb".  Set to NULL to match any
+			  level.
+
+	The function returns the byte position of the next record
+	that matches the date, variable and level using a text
+	comparison with the inventory.
+
+In future, more scanning functions will be made available.

@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# make monthly mean
+#
+if [ $# -eq 0 ] ; then
+  echo "$0 output dhr (list of files)"
+  exit 8
+fi
+set -x
+# tmp1=/gpfstmp/$LOGNAME/mk_monthly.1.$$.tmp
+#tmp2=/gpfstmp/$LOGNAME/mk_monthly.2.$$.tmp
+tmp1=/tmp/mk_monthly.1.tmp
+tmp2=/tmp/mk_monthly.2.tmp
+CODE=/export/wesley/wd51we/gribw/rr
+
+output=$1
+dhr=$2
+onefile=0
+if [ $# -eq 3 ] ; then
+  onefile=1
+  tmp1=$3
+fi
+shift 2
+
+if [ $onefile -eq 0 ] ; then
+   cat $* >$tmp1
+   if [ $? -ne 0 ] ; then
+      echo "error: ran out of disk space"
+      exit 8
+   fi
+fi
+
+if [ ! -s $tmp1 ] ; then
+    echo "missing files"
+    exit 8
+fi
+
+wgrib $tmp1 | sed 's/kpds7=//' | sort -t: -k4,4 -k6,6 -k7rn,7 -k3,3 >$tmp2
+
+wgrib $tmp1 | sed 's/kpds7=//' | sort -t: -k4,4 -k6,6 -k7rn,7 -k3,3 | \
+  $CODE/mk_ave_eta_slow.x $tmp1 $output $dhr
+
+# [ $onefile -eq 0 ] && rm $tmp1

@@ -1,0 +1,20 @@
+apply_mask.txt
+
+This is a program/procedure that I used to mask out "questionable" 
+data.  This is an example of a practical use of gribw.
+
+
+		How to applies a mask to a GRIB file
+
+(1) Decode GRIB file along with header file
+
+    wgrib -PDS10 -GDS10 oldgrib -d all -o oldbin >header
+
+(2) Make a file with just the dates
+
+    cut -f3 -d: <header >dates
+
+(3) Fortran program (apply_mask.f) that reads (a) oldbin (b) dates 
+    (c) mask and writes (a) newbin
+
+(4) gribw -i newbin -o newgrib <header 

@@ -1,0 +1,31 @@
+                                 add_NCEP_gds
+
+The GDS, grid description section, of a GRIB file provides a complete
+description of the grid being used.  The GDS is optional but is highly 
+recommended, according to John Stackpole (NCEP Office Note 388).  If 
+the GDS is missing, one has to determine the grid type from a center 
+dependent grid identification code.  Of course, this plays havoc with 
+GRIB reading code.  No one knows or wants to enter in every grid type 
+from every center into their code.  Too much work and impossible to keep 
+up to date.  Consequently a GDS should mandatory.  However, I don't run 
+the world, and the GDS is optional.
+
+When the GDS is missing, generic degribbing code will not work well.
+Problems were found in GrADS v1.5.1.15 (linux) and wgrib v1.5.0a.
+The program "add_NCEP_gds" will, as the name suggests, add a missing 
+GDS to a NCEP GRIB file.  The program is restricted to NCEP files 
+because I don't know the grid types for other centers.  Even if I did 
+know, I'm not going to enter in the grid codes.  
+
+This code was written using a preliminary version of the gribw library.
+
+
+Compiling requires an ISO/ANSI C compiler.
+
+       gcc -o add_NCEP_gds add_NCEP_gds.c      (gcc)
+       acc -o add_NCEP_gds add_NCEP_gds.c      (Sun: acc is option)
+       cc -o add_NCEP_gds add_NCEP_gds.c       (ISO/ANSI cc)
+       cc -Aa -o wgrib all.c -lm               (hp: -Aa = ANSI C)
+
+
+                                   Wesley Ebisuzaki 9/96

@@ -1,0 +1,135 @@
+gribw v0.1 (Alpha version)
+
+Gribw is a grib encoder which provides a simple interface.  To use it,
+you need some knowledge of how to generate a PDS and GDS.  Gribw
+is a stand-alone utility and can be used to encode output from C
+and Fortran programs.
+
+Gribw requires two files, a binary file with the grid data and a text
+file which contains the PDS and GDS for each grib message (record).
+
+
+                          Formats:
+
+Binary input file:
+   (1) Unix f77 style, integer header and trailer
+
+          header (recl in bytes)   int (integer)   \
+          data                     float (real)     |
+          ...                                       } one record
+          data                     float (real)     |
+          trailer (recl in bytes)  int (integer)   /
+
+
+   (2) sequential data, no header nor trailer, direct access
+       must use -recl option to specific grid size
+
+          data                     float (real)    \
+          ...                                       } one record
+          data                     float (real)    /
+
+    Note: undefined values should be set to 9.999e20.
+
+
+Text input file:
+   (1) hexadecimal format, -PDS, -GDS 
+          ...:PDS=(hex string):GDS=(hex string):...<nl>
+       "..." represents any other fields not starting with PDS or GDS
+       <nl> = new line
+
+   (1) decimal format, -PDS10, -GDS10
+          ...:PDS10=(list of number):GDS10=(list of numbers):...<nl>
+       "..." represents any other fields not starting with PDS or GDS
+       <nl> = new line
+
+   Note: format of the PDS/GDS input is compatible with the output
+of wgrib.
+
+
+                               Usage:
+
+gribw [options] binary_file <text_file
+
+   options:
+     -o [output grib]      the name of the output grib file
+                           default is dump.grb
+     -nh [recl in words]   use binary format 2 (no header/trailer)
+                           recl is the number of floats/grid
+     -prec [bits]          number of bit of precision used to
+                           store the numbers (ECMWF convention).  
+                           Default is to use the decimal scaling 
+                           and only store integers (NCEP convention).
+
+Since the formats of the text and binary files are so simple, almost
+any language can be used to create them.  Unfortunately creation
+of the text file requires much knowledge of the GRIB standard.
+This problem could be solved by the making tools to create the 
+PDS/GDS but that is for another day.
+
+
+                                Compiling
+
+
+Gribw is written in ANSI/ISO C (standard C).  The minimum requirement 
+is a 32-bit machine (compiler).  While the code may run with a
+16-bit machine, I have no way of testing it and I would like the
+flexibility of assuming a 32-bit integer for possible optimizations
+of the GRIB encoding routines.
+
+     Cray: cc -o gribw gribw.c
+     gcc:  gcc -o gribw gribw.c -lm
+     acc:  acc -o gribw gribw.c -lm
+
+
+
+                                Example 1
+
+This is a trivial example showing how gribw is the functional inverse
+of wgrib.
+
+   wgrib -PDS -GDS -o dump -d all land.grb | gribw -o land.grb.new dump
+
+The first half of the previous line decodes a grib file (land.grb)
+making (1) a binary file and (2) writing out the PDS/GDS to stdout.
+The second half reads the PDS/GDS from stdin and reads the file dump
+in order to create the grib file dump.grb.
+
+This example does no useful work but shows is the basis of the 
+second example.
+
+
+                                Example 2
+
+Suppose we have a global grid and only need the data over some region.
+We can save space by either (1) changing to a new grid or (2) making
+the unwanted points undefined.  This example takes the second approach.
+
+   wgrib -PDS -GDS -o dump -d all land.grb >pds_file
+   a.out  (see fortran program below)
+   gribw -o land.grb.new dump.2 <pds_file
+
+The fortran program could look like this:
+
+        program mask
+	parameter (nx=144,ny=73)
+	real map(nx,ny)
+	open(unit=1,file='dump',form='unformatted',status='old')
+	open(unit=2,file='dump.2',form='unformatted',status='unknown')
+100	read(1,end=200) map
+	    do j = 1, ny
+	    do i = 1, nx
+		if (i.lt.10.or.i.gt.20.or.j.lt.10.or.j.gt.20) then
+c		    outside bounds, set value to undefined
+		    map(i,j) = 9.999e20
+		endif
+	    enddo
+	    enddo
+	    write(2) map
+	goto 100
+200	stop
+	end
+
+This example may or may not work on your computer depending on the
+fortran compiler.
+
+
