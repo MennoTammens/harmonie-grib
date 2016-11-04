@@ -1,7 +1,7 @@
 # harmonie-grib specifics
 data/*
 tmp/*
-ggrib
+./ggrib
 *.geojson
 *.bz2
 
