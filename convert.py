@@ -4,9 +4,11 @@ from __future__ import print_function
 
 import glob
 import os
+import shutil
 import subprocess
 import sys
 from datetime import datetime
+import json
 
 from numpy import sqrt
 
@@ -16,12 +18,7 @@ TMPDIR = 'tmp/'
 DATADIR = 'data/'
 
 # bounds to create sliced versions for:
-BOUNDS = {
-    # label: [sw_corner, ne_corner] in (lng, lat)-order
-    'nl': [[3.071, 50.748], [7.252, 53.761]],
-    'ijmwad': [[4.363, 52.294], [5.903, 53.411]],
-    'zeeland': [[2.6, 51.2], [5.0, 52.0]]
-}
+AREAS = json.load(open('areas.json'))
 
 # discover ggrib location
 GGRIB_BIN = None
@@ -99,33 +96,27 @@ if __name__ == '__main__':
     if not os.path.isdir(DATADIR + run_time):
         os.mkdir(DATADIR + run_time)
 
-    # delete old files
-    for file in glob.glob('harm36_v1_*.grb.bz2'):
-        os.remove(file)
-
-    def compress_rename(src, dst):
-        subprocess.call(['bzip2', src])
-        os.rename(src + '.bz2', dst)
-
     def bounded_slice(src, name, bounds):
         dst = filename_fmt.format(name)
         print('Writing {} to {}'.format(name, dst))
 
-        tmp_filename = 'temp_bounds.grb'
-        cmd = [GGRIB_BIN, src, tmp_filename]
-        cmd.extend(map(str, [bounds[0][0], bounds[0][1], bounds[1][0], bounds[1][1]]))
+        cmd = [GGRIB_BIN, src, dst]
+        cmd.extend(map(str, bounds[0] + bounds[1]))
         subprocess.call(cmd)
-
-        compress_rename(tmp_filename, dst)
 
     if GGRIB_BIN is None:
         print('ggrib binary not found, please install by typing `make ggrib`')
     else:
         DEVNULL = open(os.devnull, 'wb')
 
-        for name, bounds in BOUNDS.items():
-            bounded_slice(TMPDIR+'temp.grb', name, bounds)
-            bounded_slice(TMPDIR+'temp_wind.grb', 'wind_' + name, bounds)
+        for area in AREAS:
+            bounded_slice(TMPDIR+'temp.grb', area['abbr'], area['bounds'])
+            bounded_slice(TMPDIR+'temp_wind.grb', area['abbr'] + '_wind', area['bounds'])
 
-    compress_rename(TMPDIR+'temp.grb', filename)
-    compress_rename(TMPDIR+'temp_wind.grb', filename_fmt.format('wind'))
+    os.rename(TMPDIR+'temp.grb', filename)
+    os.rename(TMPDIR+'temp_wind.grb', filename_fmt.format('wind'))
+
+    # delete old files
+    for dir in glob.glob(DATADIR+'*'):
+        if dir != DATADIR+run_time:
+            shutil.rmtree(dir)
