@@ -6,12 +6,14 @@ import glob
 import os
 import subprocess
 import sys
+from datetime import datetime
 
 from numpy import sqrt
 
 import pygrib
 
-WORKDIR = 'work/'
+TMPDIR = 'tmp/'
+DATADIR = 'data/'
 
 # bounds to create sliced versions for:
 BOUNDS = {
@@ -28,14 +30,14 @@ for location in ('/usr/local/bin/ggrib', './ggrib'):
         GGRIB_BIN = location
 
 if __name__ == '__main__':
-    files = sorted(glob.glob1(WORKDIR, '*_GB'))
+    files = sorted(glob.glob(os.path.join(TMPDIR, '*_GB')))
 
     if len(files) != 49:
-        print('Verkeerd aantal GRIB-bestanden in {}, exiting'.format(WORKDIR))
+        print('Verkeerd aantal GRIB-bestanden in {}, exiting'.format(TMPDIR))
         sys.exit(1)
 
-    gribout = open('temp.grb', 'wb')
-    gribout_wind = open('temp_wind.grb', 'wb')
+    gribout = open(TMPDIR+'temp.grb', 'wb')
+    gribout_wind = open(TMPDIR+'temp_wind.grb', 'wb')
 
     def writeGribMessage(message, wind=False):
         message['generatingProcessIdentifier'] = 96
@@ -46,7 +48,7 @@ if __name__ == '__main__':
             gribout_wind.write(message.tostring())
 
     for filename in files:
-        grbs = pygrib.open(os.path.join('work/', filename))
+        grbs = pygrib.open(filename)
 
         # Mean sea level pressure
         msg_mslp = grbs.select(indicatorOfParameter=1)[0]
@@ -88,10 +90,14 @@ if __name__ == '__main__':
         msg_ug.level = 0
         writeGribMessage(msg_ug, wind=True)
 
-    date_base = files[0][:-6]
+        os.remove(filename)
 
-    filename = date_base + 'zygrib.grb.bz2'
-    filename_fmt = date_base + 'zygrib_{}.grb.bz2'
+    run_time = datetime.strptime(files[0][-17:-7], '%Y%m%d%H').strftime('%Y-%m-%d_%H')
+
+    filename = DATADIR + '{0}/harmonie_zy_{0}.grb'.format(run_time)
+    filename_fmt = DATADIR + '{0}/harmonie_zy_{0}_{{}}.grb'.format(run_time)
+    if not os.path.isdir(DATADIR + run_time):
+        os.mkdir(DATADIR + run_time)
 
     # delete old files
     for file in glob.glob('harm36_v1_*.grb.bz2'):
@@ -118,8 +124,8 @@ if __name__ == '__main__':
         DEVNULL = open(os.devnull, 'wb')
 
         for name, bounds in BOUNDS.items():
-            bounded_slice('temp.grb', name, bounds)
-            bounded_slice('temp_wind.grb', 'wind_' + name, bounds)
+            bounded_slice(TMPDIR+'temp.grb', name, bounds)
+            bounded_slice(TMPDIR+'temp_wind.grb', 'wind_' + name, bounds)
 
-    compress_rename('temp.grb', filename)
-    compress_rename('temp_wind.grb', filename_fmt.format('wind'))
+    compress_rename(TMPDIR+'temp.grb', filename)
+    compress_rename(TMPDIR+'temp_wind.grb', filename_fmt.format('wind'))

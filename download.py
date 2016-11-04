@@ -9,6 +9,7 @@ FTP_HOST = 'data.knmi.nl'
 BASE_PATH = '/download/harmonie_p1/0.2/noversion/0000/00/00/'
 DATE_FMT = '%b %d %H:%M'
 
+TMPDIR = 'tmp/'
 ftp = FTP(FTP_HOST, 'anonymous')
 ftp.cwd(BASE_PATH)
 
@@ -29,7 +30,7 @@ def file_list():
 
 
 def get_file(name):
-    ftp.retrbinary('RETR {}'.format(name), open(name, 'wb').write)
+    ftp.retrbinary('RETR {}'.format(name), open(TMPDIR + name, 'wb').write)
 
 
 def mtime(filename):
@@ -43,7 +44,7 @@ print()
 
 recent = max(file_list(), key=lambda x: x['mtime'])
 
-if os.path.isfile(recent['name']) and recent['mtime'] < mtime(recent['name']):
+if os.path.isfile(TMPDIR + recent['name']) and recent['mtime'] < mtime(TMPDIR + recent['name']):
     print('Skipping download, {} already up to date'.format(recent['name']))
 else:
     print('Downloading: {name}, size: {size}'.format(**recent))
