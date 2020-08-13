@@ -92,8 +92,6 @@ def convert(tmpdirname):
                     msg_ug['P1'] = msg_ug['P2'] - 1
                 writeGribMessage(msg_ug, wind=True)
 
-                #os.remove(filename)
-
 
     run_time = str(files[0])[-21:-11]
     run_time_date = datetime.strptime(run_time, '%Y%m%d%H').strftime('%Y-%m-%d_%H')
@@ -126,10 +124,10 @@ def convert(tmpdirname):
     (DATA_DIR / 'new').rename(DATA_DIR / 'latest')
 
     # delete old files
-    for dir in DATA_DIR.glob('*'):
-        if dir not in (dst_dir, DATA_DIR / 'latest'):
-            print(f'removing {dir}')
-            shutil.rmtree(dir)
+    for path in DATA_DIR.glob('*'):
+        if path.is_dir() and path not in (dst_dir, DATA_DIR / 'latest'):
+            print(f'removing {path}')
+            shutil.rmtree(path)
 
 if __name__ == "__main__":
     convert(TMP_DIR)

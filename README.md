@@ -6,8 +6,18 @@ De GRIB-files van het KNMI zijn nog niet direct in GRIB-viewers als [XyGrib](htt
 Voor meer informatie en discussie, zie dit topic op Zeilersforum: https://zeilersforum.nl/index.php/forum-125/meteo/575942-hoge-resolutie-grib-files
 
 ## Usage
-- Docker:
+- From Docker Hub:
 
   ```
-  docker run --rm --name grib-download -e KNMI_API_KEY=1234567890abcdef --mount type=bind,source=$(pwd)/data,target=/data  mennotammens/harmonie-grib:latest
+  mkdir -p data
+  docker run --rm --name grib-download -e KNMI_API_KEY=1234567890abcdef --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) mennotammens/harmonie-grib:latest
+  ```
+
+- From GitHub:
+
+  ```
+  git clone git@github.com:MennoTammens/harmonie-grib.git
+  cd harmonie-grib
+  docker build -t harmonie-grib:latest .
+  docker run --rm --name grib-download -e KNMI_API_KEY=1234567890abcdef --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) harmonie-grib:latest
   ```
