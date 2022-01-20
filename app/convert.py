@@ -109,6 +109,8 @@ def convert(tmpdirname):
                 # Wind gusts
                 msg_ug = grbs.select(indicatorOfParameter=162)[0]
                 msg_vg = grbs.select(indicatorOfParameter=163)[0]
+                [[ug]], _, _ = msg_ug.data(lat1=lat1,lat2=lat2,lon1=lon1,lon2=lon2)
+                [[vg]], _, _ = msg_vg.data(lat1=lat1,lat2=lat2,lon1=lon1,lon2=lon2)
                 msg_ug.values = sqrt(msg_ug.values ** 2 + msg_vg.values ** 2)
                 msg_ug.indicatorOfParameter = 180
                 msg_ug.typeOfLevel = 'surface'
@@ -116,8 +118,6 @@ def convert(tmpdirname):
                 if msg_ug['P2'] > 0:
                     msg_ug['P1'] = msg_ug['P2'] - 1
                 writeGribMessage(msg_ug, wind=True)
-                [[ug]], _, _ = msg_ug.data(lat1=lat1,lat2=lat2,lon1=lon1,lon2=lon2)
-                [[vg]], _, _ = msg_vg.data(lat1=lat1,lat2=lat2,lon1=lon1,lon2=lon2)
                 gust_dir = (degrees(atan2(ug, vg))+180)%360
                 gust_speed = sqrt(ug**2 + vg**2) * 3.6 / 1.852
 
