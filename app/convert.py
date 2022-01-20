@@ -80,7 +80,7 @@ def convert(tmpdirname):
                 # Temperature 2m
                 msg_t = grbs.select(indicatorOfParameter=11)[0]
                 writeGribMessage(msg_t)
-                [[t]], _, _ = msg_rh.data(lat1=lat1,lat2=lat2,lon1=lon1,lon2=lon2)
+                [[t]], _, _ = msg_t.data(lat1=lat1,lat2=lat2,lon1=lon1,lon2=lon2)
                 t = t - 273.15
 
                 # U-wind
