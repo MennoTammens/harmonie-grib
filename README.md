@@ -10,7 +10,7 @@ Voor meer informatie en discussie, zie dit topic op Zeilersforum: https://zeiler
 
   ```
   mkdir -p data
-  docker run --rm --name grib-download -e KNMI_API_KEY=1234567890abcdef --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) mennotammens/harmonie-grib:latest
+  docker run --rm --name grib-download -e KNMI_API_KEY=1234567890abcdef -e METEOGRAM_LAT=51.2345 -e METEOGRAM_LON=6.1234 --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) mennotammens/harmonie-grib:latest
   ```
 
 - From GitHub:
@@ -19,5 +19,5 @@ Voor meer informatie en discussie, zie dit topic op Zeilersforum: https://zeiler
   git clone git@github.com:MennoTammens/harmonie-grib.git
   cd harmonie-grib
   docker build -t harmonie-grib:latest .
-  docker run --rm --name grib-download -e KNMI_API_KEY=1234567890abcdef --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) harmonie-grib:latest
+  docker run --rm --name grib-download -e KNMI_API_KEY=1234567890abcdef -e METEOGRAM_LAT=51.2345 -e METEOGRAM_LON=6.1234 --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) harmonie-grib:latest
   ```
