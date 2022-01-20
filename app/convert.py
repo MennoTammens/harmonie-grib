@@ -67,7 +67,7 @@ def convert(tmpdirname):
                 msg_mslp.typeOfLevel = 'meanSea'
                 writeGribMessage(msg_mslp)
                 analDate = msg_mslp.analDate.isoformat()
-                validDate = msg_mslp.validDate.isoformat()
+                validDate = datetime.strptime(f'{msg_mslp["validityDate"]}{msg_mslp["validityTime"]:04d}', '%Y%m%d%H%M').isoformat()
                 [[mslp]], _, _ = msg_mslp.data(lat1=lat1,lat2=lat2,lon1=lon1,lon2=lon2)
                 mslp = mslp / 100
 
