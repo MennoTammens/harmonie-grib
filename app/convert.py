@@ -10,15 +10,18 @@ import pygrib
 DATA_DIR = Path('/data')
 TMP_DIR = DATA_DIR / 'tmp'
 
-DATASET_PRODUCT = int(os.getenv('data_product'))
-HOUR_MAX = int(os.getenv('hour_max'))
+DATASET_PRODUCT = int(os.getenv('DATA_PRODUCT'))
+HOUR_MAX = int(os.getenv('HOUR_MAX'))
 
-# specify filters
-type_of_level = str(os.getenv('type_of_level'))
-value_of_level = float(os.getenv('level_value'))
+DELETE_OLD_FILES = bool(os.getenv('DELETE_OLD_FILES'))
+
+# specify data filters
+TYPE_OF_LEVEL = str(os.getenv('TYPE_OF_LEVEL'))
+VALUE_OF_LEVEL = float(os.getenv('VALUE_OF_LEVEL'))
 
 
 def convert(tmpdirname):
+
     tmp_dir = Path(tmpdirname)
     files = sorted(tmp_dir.glob('*_GB'))
 
@@ -48,15 +51,15 @@ def convert(tmpdirname):
             with pygrib.open(str(filename)) as grbs:
                 # U-wind
                 msg_u = grbs.select(indicatorOfParameter=33,
-                                    typeOfLevel=type_of_level,
-                                    level=value_of_level,
+                                    typeOfLevel=TYPE_OF_LEVEL,
+                                    level=VALUE_OF_LEVEL,
                                     )[0]
                 writeGribMessage(msg_u, wind=True)
 
                 # V-wind
                 msg_v = grbs.select(indicatorOfParameter=34,
-                                    typeOfLevel=type_of_level,
-                                    level=value_of_level,
+                                    typeOfLevel=TYPE_OF_LEVEL,
+                                    level=VALUE_OF_LEVEL,
                                     )[0]
                 writeGribMessage(msg_v, wind=True)
 
@@ -69,7 +72,7 @@ def convert(tmpdirname):
 
     filename_fmt = f'harmonie_xy_dp{DATASET_PRODUCT}_' \
                    f'{run_time_date}_wind_' \
-                   f'{type_of_level}{int(value_of_level)}_' \
+                   f'{TYPE_OF_LEVEL}{int(VALUE_OF_LEVEL)}_' \
                    f'{HOUR_MAX}hours.grb'
 
     shutil.move(tmp_grib_wind, dst_dir / filename_fmt.format('wind'))
@@ -77,11 +80,12 @@ def convert(tmpdirname):
     (DATA_DIR / 'new').symlink_to(dst_dir.relative_to(DATA_DIR))
     (DATA_DIR / 'new').rename(DATA_DIR / 'latest')
 
-    # delete old files
-    for path in DATA_DIR.glob('*'):
-        if path.is_dir() and path not in (dst_dir, DATA_DIR / 'latest'):
-            print(f'removing {path}')
-            shutil.rmtree(path)
+    if DELETE_OLD_FILES:
+        # delete old files
+        for path in DATA_DIR.glob('*'):
+            if path.is_dir() and path not in (dst_dir, DATA_DIR / 'latest'):
+                print(f'removing {path}')
+                shutil.rmtree(path)
 
 
 if __name__ == "__main__":

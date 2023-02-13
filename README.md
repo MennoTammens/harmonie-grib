@@ -44,4 +44,42 @@ Presumably, this is due to the Rotated Lat/Lon-representation for DP2.
       docker run --rm --name grib-download -e KNMI_API_KEY=<your_key> -e type_of_level=isobaricInhPa -e level_value=925 -e data_product=3 -e hour_max=14 --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) harmonie-grib-wind:latest
       ```
     
-N.B. The original repository also describes how to run via DockerHub ([harmonie-grib](https://github.com/MennoTammens/harmonie-grib), in Dutch). 
+N.B. The original repository also describes how to run via DockerHub ([harmonie-grib](https://github.com/MennoTammens/harmonie-grib), in Dutch).
+
+## Running a scheduled job
+
+The downloading and conversion of data can also be done through a scheduled job using *cron*-services and *Docker*. 
+There are two ways to do so:
+1. Using a Dockerfile
+2. Using docker-compose
+
+For both options, you need to specify some environment variables in a file `/jobs/.env`: with the following structure:
+    
+```
+KNMI_API_KEY=<your_key>
+DATA_PRODUCT=1
+DELETE_OLD_FILES=False
+TYPE_OF_LEVEL=heightAboveGround
+VALUE_OF_LEVEL=300
+HOUR_MAX=14
+```
+
+Of course, you can change these values whenever necessary. 
+
+### Cron-service using a Dockerfile
+
+To launch a cron service which checks for new data, and if available, performs the conversion, use the `cron.Dockerfile`.
+
+```
+docker build -f cron.Dockerfile -t harmonie-grib .
+docker run -d --mount type=bind,source=$(pwd)/data,target=/data --env-file=jobs/.env --name harmonie_converter harmonie-grib
+```
+
+This should launch the cron job in a docker container, which is **scheduled to run every 30 minutes**. 
+The output should become available in a local `data/`-folder (change this when needed).
+
+If you want to check that things are running, you can do:
+```
+docker exec -it harmonie_converter /bin/bash
+cat /var/log/cron.log
+```

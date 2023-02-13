@@ -16,11 +16,11 @@ TMP_DIR = DATA_DIR / 'tmp'
 API_URL = "https://api.dataplatform.knmi.nl/open-data"
 API_KEY = os.getenv('KNMI_API_KEY')
 
-DATASET_PRODUCT = int(os.getenv('data_product'))
+DATASET_PRODUCT = int(os.getenv('DATA_PRODUCT'))
 DATASET_NAME = f"harmonie_arome_cy40_p{DATASET_PRODUCT}"
 DATASET_VERSION = "0.2"
 
-HOUR_MAX = int(os.getenv('hour_max'))
+HOUR_MAX = int(os.getenv('HOUR_MAX'))
 
 
 def file_list():
@@ -66,14 +66,15 @@ def cron():
     filename = latest["filename"]
     run_time = filename[-14:-4]
     run_time_date = datetime.strptime(run_time, '%Y%m%d%H').strftime('%Y-%m-%d_%H')
+    now = datetime.now()
 
     if (DATA_DIR / run_time_date).exists() or (TMP_DIR / f'HA40_N25_{run_time}00_00000_GB').exists():
-        print(f"Skipping download, {filename} already downloaded")
+        print(f"[{now}] Skipping download, {filename} already downloaded")
     else:
         with tempfile.TemporaryDirectory() as tmpdirname:
             get_file(filename, tmpdirname, HOUR_MAX)
             convert.convert(tmpdirname)
-    print('DONE')
+        print(f'[{now}] Done with downloading and processing data.')
 
 
 if __name__ == "__main__":
