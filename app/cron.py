@@ -9,10 +9,6 @@ import tempfile
 from pathlib import Path
 import convert
 
-
-DATA_DIR = Path('/data')
-TMP_DIR = DATA_DIR / 'tmp'
-
 API_URL = "https://api.dataplatform.knmi.nl/open-data"
 API_KEY = os.getenv('KNMI_API_KEY')
 
@@ -21,6 +17,9 @@ DATASET_NAME = f"harmonie_arome_cy40_p{DATASET_PRODUCT}"
 DATASET_VERSION = "0.2"
 
 HOUR_MAX = int(os.getenv('HOUR_MAX'))
+
+DATA_DIR = Path(f'/data/dp{DATASET_PRODUCT}')
+TMP_DIR = DATA_DIR / 'tmp'
 
 
 def file_list():
@@ -68,6 +67,8 @@ def cron():
     run_time_date = datetime.strptime(run_time, '%Y%m%d%H').strftime('%Y-%m-%d_%H')
     now = datetime.now()
 
+    os.makedirs(DATA_DIR, exist_ok=True)
+    os.makedirs(TMP_DIR, exist_ok=True)
     if (DATA_DIR / run_time_date).exists() or (TMP_DIR / f'HA40_N25_{run_time}00_00000_GB').exists():
         print(f"[{now}] Skipping download, {filename} already downloaded")
     else:
