@@ -7,10 +7,11 @@ from datetime import datetime
 from pathlib import Path
 import pygrib
 
-DATA_DIR = Path('/data')
+DATASET_PRODUCT = int(os.getenv('DATA_PRODUCT'))
+
+DATA_DIR = Path(f'/data/dp{DATASET_PRODUCT}')
 TMP_DIR = DATA_DIR / 'tmp'
 
-DATASET_PRODUCT = int(os.getenv('DATA_PRODUCT'))
 HOUR_MAX = int(os.getenv('HOUR_MAX'))
 
 DELETE_OLD_FILES = bool(os.getenv('DELETE_OLD_FILES'))

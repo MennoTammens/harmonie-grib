@@ -19,7 +19,6 @@ DATASET_VERSION = "0.2"
 HOUR_MAX = int(os.getenv('HOUR_MAX'))
 
 DATA_DIR = Path(f'/data/dp{DATASET_PRODUCT}')
-TMP_DIR = DATA_DIR / 'tmp'
 
 
 def file_list():
@@ -68,8 +67,8 @@ def cron():
     now = datetime.now()
 
     os.makedirs(DATA_DIR, exist_ok=True)
-    os.makedirs(TMP_DIR, exist_ok=True)
-    if (DATA_DIR / run_time_date).exists() or (TMP_DIR / f'HA40_N25_{run_time}00_00000_GB').exists():
+    print(DATA_DIR / run_time_date)
+    if (DATA_DIR / run_time_date).exists():
         print(f"[{now}] Skipping download, {filename} already downloaded")
     else:
         with tempfile.TemporaryDirectory() as tmpdirname:
