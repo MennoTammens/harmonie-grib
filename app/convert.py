@@ -21,10 +21,13 @@ TYPE_OF_LEVEL = str(os.getenv('TYPE_OF_LEVEL'))
 VALUE_OF_LEVEL = float(os.getenv('VALUE_OF_LEVEL'))
 
 
-def convert(tmpdirname):
+def convert(tmpdirname: str, subfolder: str = None):
 
     tmp_dir = Path(tmpdirname)
-    files = sorted(tmp_dir.glob('*_GB'))
+    if subfolder:
+        files = sorted(tmp_dir.glob(f'{subfolder}/*_GB'))
+    else:
+        files = sorted(tmp_dir.glob('*_GB'))
 
     if len(files) != (HOUR_MAX + 1):
         print(f'Verkeerd aantal GRIB-bestanden in {tmp_dir}, exiting')

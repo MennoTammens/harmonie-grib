@@ -55,6 +55,7 @@ def get_file(filename, tmpdirname, hour_max: int):
                     tar.extract(tarinfo, tmpdirname)
                 else:
                     break
+
     print(f'Downloaded {filename} for first {hour_max} hours of forecast'
           f' ({hour_max+1} files)', flush=True)
 
@@ -62,6 +63,7 @@ def get_file(filename, tmpdirname, hour_max: int):
 def cron():
     latest = file_list()[-1]
     filename = latest["filename"]
+    subfolder = filename.strip('.tar')
     run_time = filename[-14:-4]
     run_time_date = datetime.strptime(run_time, '%Y%m%d%H').strftime('%Y-%m-%d_%H')
     now = datetime.now()
@@ -73,7 +75,7 @@ def cron():
     else:
         with tempfile.TemporaryDirectory() as tmpdirname:
             get_file(filename, tmpdirname, HOUR_MAX)
-            convert.convert(tmpdirname)
+            convert.convert(tmpdirname, subfolder)
         print(f'[{now}] Done with downloading and processing data.')
 
 
