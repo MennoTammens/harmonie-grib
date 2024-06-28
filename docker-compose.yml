@@ -1,0 +1,18 @@
+version: "3"
+services:
+  harmonie-grib:
+    image: ghcr.io/sensingclues/harmonie-grib:latest
+    restart: unless-stopped
+    networks:
+      - main
+    volumes:
+      - ./data/harmonie-grib/data/:/data
+    environment:
+      - KNMI_API_KEY=${KNMI_API_KEY}
+      - DATA_PRODUCT=3
+      - DELETE_OLD_FILES=1
+      - TYPE_OF_LEVEL=isobaricInhPa
+      - VALUE_OF_LEVEL=925
+      - HOUR_MAX=14
+    labels:
+      - com.centurylinklabs.watchtower.enable=${AUTO_DEPLOY:-false}

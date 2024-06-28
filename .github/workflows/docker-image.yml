@@ -48,6 +48,7 @@ jobs:
           provenance: false
           platforms: linux/amd64
           context: "./"
+          file: ./cron.Dockerfile
           tags: |
             ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
             ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
