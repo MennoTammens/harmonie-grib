@@ -51,7 +51,6 @@ jobs:
           file: ./cron.Dockerfile
           tags: |
             ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-            ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:${{ env.TAG }}
             ghcr.io/${{ env.REPO_OWNER }}/${{ env.IMAGE_NAME }}:latest
 
   deploy-to-analytical:
