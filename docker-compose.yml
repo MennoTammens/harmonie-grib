@@ -4,7 +4,7 @@ services:
     image: ghcr.io/sensingclues/harmonie-grib:latest
     restart: unless-stopped
     volumes:
-      - ./data/harmonie-grib/data/:/data
+      - /deploy/data/harmonie-grib/data/:/data
     environment:
       - KNMI_API_KEY=${KNMI_API_KEY}
       - DATA_PRODUCT=3
