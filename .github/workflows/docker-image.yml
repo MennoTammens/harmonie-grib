@@ -13,6 +13,7 @@ on:
 
 env:
   IMAGE_NAME: harmonie-grib
+  KNMI_API_KEY: ${{ secrets.KNMI_API_KEY }}
 
 jobs:
 

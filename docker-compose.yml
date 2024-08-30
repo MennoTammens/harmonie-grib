@@ -8,7 +8,7 @@ services:
     volumes:
       - ./data/harmonie-grib/data/:/data
     environment:
-      - KNMI_API_KEY=${{ secrets.KNMI_API_KEY }}
+      - KNMI_API_KEY=${KNMI_API_KEY}
       - DATA_PRODUCT=3
       - DELETE_OLD_FILES=1
       - TYPE_OF_LEVEL=isobaricInhPa
