@@ -3,12 +3,8 @@ services:
   harmonie-grib:
     image: ghcr.io/sensingclues/harmonie-grib:latest
     restart: unless-stopped
-    networks:
-      network1:
-        name: deploy_main
-        external: true
     volumes:
-      - ./data/harmonie-grib/data/:/data
+      - /deploy/data/harmonie-grib/data/:/data
     environment:
       - KNMI_API_KEY=${KNMI_API_KEY}
       - DATA_PRODUCT=3

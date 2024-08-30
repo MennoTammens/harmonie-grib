@@ -64,6 +64,13 @@ jobs:
           ref: ${{ github.event.inputs.branch || github.ref }}  # Use input branch or the branch from the push
           path: ./repo
 
+      - name: Login to container Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          registry: ghcr.io
+
       - name: Docker compose up
         run: |
           cd ./repo
