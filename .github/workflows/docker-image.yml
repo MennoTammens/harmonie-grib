@@ -49,6 +49,7 @@ jobs:
 
   deploy-to-analytical:
     runs-on: self-hosted
+    needs: build
     steps:
       - name: Checkout the repository
         uses: actions/checkout@v2
