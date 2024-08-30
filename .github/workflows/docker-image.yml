@@ -1,4 +1,4 @@
-name: Docker Image CI
+name: Build docker image and push to ghcr.io
 
 on:
   push:
