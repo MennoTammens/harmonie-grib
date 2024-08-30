@@ -13,4 +13,4 @@
 #########
 
 # execute grib downloader and converter and write stdout to file
-0 * * * * export $(xargs < /jobs/.env); python3 /app/cron.py >>/var/log/cron.log 2>&1
+0 * * * * python3 /app/cron.py >>/var/log/cron.log 2>&1
