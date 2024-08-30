@@ -4,7 +4,9 @@ services:
     image: ghcr.io/sensingclues/harmonie-grib:latest
     restart: unless-stopped
     networks:
-      - deploy_main
+      network1:
+        name: deploy_main
+        external: true
     volumes:
       - ./data/harmonie-grib/data/:/data
     environment:
