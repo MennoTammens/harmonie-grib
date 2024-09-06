@@ -2,8 +2,8 @@ name: Build docker image and push to ghcr.io
 
 on:
   push:
-    tags:
-      - "*"
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       branch:
