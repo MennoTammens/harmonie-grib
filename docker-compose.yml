@@ -7,10 +7,12 @@ services:
       - /deploy/data/harmonie-grib/data/:/data
     environment:
       - KNMI_API_KEY=${KNMI_API_KEY}
-      - DATA_PRODUCT=3
+      - DATASET_ID=43
+      - DATASET_PRODUCT=3
+      - DATASET_VERSION=1.0
       - DELETE_OLD_FILES=1
-      - TYPE_OF_LEVEL=isobaricInhPa
-      - VALUE_OF_LEVEL=925
+      - TYPE_OF_LEVEL=heightAboveGround
+      - VALUE_OF_LEVEL=300
       - HOUR_MAX=14
     labels:
       - com.centurylinklabs.watchtower.enable=${AUTO_DEPLOY:-false}

@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 import pygrib
 
-DATASET_PRODUCT = int(os.getenv('DATA_PRODUCT'))
+DATASET_PRODUCT = int(os.getenv('DATASET_PRODUCT'))
 
 DATA_DIR = Path(f'/data/dp{DATASET_PRODUCT}')
 TMP_DIR = DATA_DIR / 'tmp'
@@ -24,6 +24,8 @@ VALUE_OF_LEVEL = float(os.getenv('VALUE_OF_LEVEL'))
 def convert(tmpdirname: str, subfolder: str = None):
 
     tmp_dir = Path(tmpdirname)
+    import os
+    print(os.listdir(tmp_dir))
     if subfolder:
         files = sorted(tmp_dir.glob(f'{subfolder}/*_GB'))
     else:
@@ -31,6 +33,7 @@ def convert(tmpdirname: str, subfolder: str = None):
 
     if len(files) != (HOUR_MAX + 1):
         print(f'Verkeerd aantal GRIB-bestanden in {tmp_dir}, exiting')
+        print(files)
         sys.exit(1)
 
     tmp_grib_wind = tmp_dir / 'temp_wind.grb'
