@@ -15,5 +15,5 @@ WORKDIR /jobs
 
 RUN crontab /jobs/download_data.sh
 
-CMD ["cron", "-f"]
+CMD printenv > /etc/environment && cron -f
 
