@@ -24,7 +24,6 @@ DATA_DIR = Path(f'/data/dp{DATASET_PRODUCT}')
 
 def file_list():
     yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
-    yesterday = "20240513"
 
     req = Request(
         f"{API_URL}/datasets/{DATASET_NAME}/versions/{DATASET_VERSION}/files?"

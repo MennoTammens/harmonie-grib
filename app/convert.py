@@ -24,8 +24,6 @@ VALUE_OF_LEVEL = float(os.getenv('VALUE_OF_LEVEL'))
 def convert(tmpdirname: str, subfolder: str = None):
 
     tmp_dir = Path(tmpdirname)
-    import os
-    print(os.listdir(tmp_dir))
     if subfolder:
         files = sorted(tmp_dir.glob(f'{subfolder}/*_GB'))
     else:
