@@ -24,10 +24,11 @@ DATA_DIR = Path(f'/data/dp{DATASET_PRODUCT}')
 
 def file_list():
     yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+    max_files = 100
 
     req = Request(
         f"{API_URL}/datasets/{DATASET_NAME}/versions/{DATASET_VERSION}/files?"
-        f"startAfterFilename=HARM43_V1_P{DATASET_PRODUCT}_{yesterday}00.tar",
+        f"maxKeys={max_files}&startAfterFilename=HARM43_V1_P{DATASET_PRODUCT}_{yesterday}00.tar",
         headers={"Authorization": API_KEY}
     )
     with urlopen(req) as list_files_response:
