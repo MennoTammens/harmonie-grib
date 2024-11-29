@@ -1,36 +1,36 @@
-# Conversion of GRIB-files for HARMONIE-model
+# Conversion of GRIB-files for KNMI HARMONIE weather model
 
 ## Introduction
-From [harmonie-grib](https://github.com/MennoTammens/harmonie-grib) (in Dutch):
+
+This repository can be used to download GRIB-files for KNMI's HARMONIE-AROME weather models and extract specific layers from these files.
+Here, we specifically extract wind data.
+
+As of September 2024, this repository focuses on [KNMI HARMONIE-AROME Cy43 weather model](https://dataplatform.knmi.nl/dataset/harmonie-arome-cy43-p1-1-0).
+Note that earlier, we used the (deprecated) [Cy40-model](https://dataplatform.knmi.nl/dataset/harmonie-arome-cy40-p1-0-2).
+See [this newsletter](https://www.knmidata.nl/actueel/nieuwsbrieven/open-data-nieuwsbrief/2023/knmi-open-data-nieuwsbrief-juli) 
+from 2023 by the KNMI in Dutch on the update to Cy43.
+
+Some context on the Cy40-model from [harmonie-grib](https://github.com/MennoTammens/harmonie-grib) (*in Dutch*):
 - Het KNMI stelt in het [KNMI Data Platform](https://dataplatform.knmi.nl/catalog/index.html) GRIB-files van het Harmonie-model vrij beschikbaar als [Open Data](http://creativecommons.org/publicdomain/mark/1.0/deed.nl). Het HARMONIE-AROME Cy40-model levert data tot 48 uur vooruit met een hoge resolutie (2,5×2,5km) en in tijdstappen van 1 uur.
 De GRIB-files van het KNMI zijn nog niet direct in GRIB-viewers als [XyGrib](https://opengribs.org/en/xygrib) te openen omdat het formaat een beetje afwijkt van wat de GRIB-viewers verwachten. Ik heb daarom de GRIB-files geconverteerd in een formaat dat wel te gebruiken is in XyGrib en diverse andere GRIB-viewers
 - Voor meer informatie en discussie, zie dit topic op Zeilersforum: https://zeilersforum.nl/index.php/forum-125/meteo/575942-hoge-resolutie-grib-files
 
 ### Modification for wind data
 
-**NOTE OCTOBER 2023**: As of Summer 2023, the HARMONIE data products are being updated 
-(see [this newsletter](https://www.knmidata.nl/actueel/nieuwsbrieven/open-data-nieuwsbrief/2023/knmi-open-data-nieuwsbrief-juli) by the KNMI in Dutch).
-The data products are expected to be updated end of 2023. New links have been added below but contain less information on the content of the products 
-(e.g. on available levels).  
-
 For the crane radar, we only need the U- and V-components for the wind forecasts in the data products offered by the KNMI for the HARMONIE-model:
-- [New link DP1](https://dataplatform.knmi.nl/dataset/harmonie-arome-cy40-p1-0-2) 
-  - [Old link DP1](https://www.knmidata.nl/data-services/knmi-producten-overzicht/atmosfeer-modeldata/data-product-1)
-  - DP1 contains wind speed at specific height, with a maximum of 300 meters above ground.
-  - Used a regular LatLon-representation.
-- [New link DP2](https://dataplatform.knmi.nl/dataset/harmonie-arome-cy40-p3-0-2) 
-  - [Old link DP2](https://www.knmidata.nl/data-services/knmi-producten-overzicht/atmosfeer-modeldata/data-product-2)
-  - DP2 contains wind speed at specific pressure levels, with a maximum of 925 hPa, which are best suited for our use case.
+- [HARMONIE-AROME Cy43 weather model](https://dataplatform.knmi.nl/dataset/harmonie-arome-cy43-p1-1-0)   
+  - The data product contains wind speed at specific pressure levels, with a maximum of 925 hPa.
   - Uses a rotated LatLon-representation.
   
-To do, the app in this modified repository can be run with instructions provided below under *Usage*.
+To do so, the app in this modified repository can be run with instructions provided below under *Usage*.
 We removed the extraction of other elements in the HARMONIE-model for simplicity, including the meteogram.
 
-**_NOTE:_** 
-- The resulting GRIB-files were successfully tested and visualized on MacOS (M1-chip) using the app Panoply, for both DP1 and DP2. 
+**_NOTE on earlier extractions (2022/2023) for Cy40-model:_**
+- In 2022/2023, we used the (now-deprecated) [Cy40-model](https://dataplatform.knmi.nl/dataset/harmonie-arome-cy40-p1-0-2).
+- The resulting GRIB-files for the old Cy40-model were successfully tested and visualized on MacOS (M1-chip) using the app Panoply, for both DP1 and DP2. 
 - However, the result for DP2 was not readable using XyGrib, nor in the existing shiny app for the crane radar. 
-Presumably, this is due to the Rotated Lat/Lon-representation for DP2.
-- For now, we will proceed with the wind-data from DP1 at 300 meters height.
+  - Presumably, this is due to the Rotated Lat/Lon-representation for DP2. We did use these files for DP2 in the end as the wind data at 925 hPa 
+  was better suited for the crane radar application than wind data at 300 meters height.
 
 ## Usage
 
@@ -41,15 +41,12 @@ Presumably, this is due to the Rotated Lat/Lon-representation for DP2.
     cd harmonie-grib
     docker build -t harmonie-grib:latest .
     ```
-3. To run:
-   1. to extract wind forecasts for the next 14 hours at 300 meters height from DP1 (data_product=1):
-      ```
-      docker run --rm --name grib-download -e KNMI_API_KEY=<your_key> -e TYPE_OF_LEVEL=heightAboveGround -e VALUE_OF_LEVEL=300 -e DATA_PRODUCT=1 -e HOUR_MAX=14 --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) harmonie-grib:latest
-      ```
-   2. to extract wind forecasts for the next 14 hours at 925 hPa from DP2 (data_product=3):
-      ```
-      docker run --rm --name grib-download -e KNMI_API_KEY=<your_key> -e TYPE_OF_LEVEL=isobaricInhPa -e VALUE_OF_LEVEL=925 -e DATA_PRODUCT=3 -e HOUR_MAX=14 --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) harmonie-grib:latest
-      ```
+3. To run and extract wind forecasts for the next 14 hours at 925 hPa from Cy43:
+    ```
+    docker run --rm --name grib-download -e KNMI_API_KEY=<your_key> -e TYPE_OF_LEVEL=isobaricInhPa -e VALUE_OF_LEVEL=925 
+    -e DATASET_ID=43 -e DATASET_PRODUCT=1 -e DATASET_VERSION=1.0 -e HOUR_MAX=14 
+    --mount type=bind,source=$(pwd)/data,target=/data --user $(id -u):$(id -g) harmonie-grib:latest
+    ```
     
 N.B. The original repository also describes how to run via DockerHub ([harmonie-grib](https://github.com/MennoTammens/harmonie-grib), in Dutch).
 
@@ -60,22 +57,13 @@ There are two ways to do so:
 1. Using a Dockerfile
 2. Using docker-compose
 
-For both options, you need to specify some environment variables in a file `/jobs/.env` with the following structure.
+For both options, you need to specify some environment variables in a file `/jobs/.env` with the following structure:
 
-For DP1, use:
 ```
 KNMI_API_KEY=<your_key>
-DATA_PRODUCT=1
-DELETE_OLD_FILES=1
-TYPE_OF_LEVEL=heightAboveGround
-VALUE_OF_LEVEL=300
-HOUR_MAX=14
-```
-
-For DP2, use:
-```
-KNMI_API_KEY=<your_key>
-DATA_PRODUCT=3
+DATASET_ID=43
+DATASET_PRODUCT=3
+DATASET_VERSION=1.0
 DELETE_OLD_FILES=1
 TYPE_OF_LEVEL=isobaricInhPa
 VALUE_OF_LEVEL=925
