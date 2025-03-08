@@ -1,0 +1,9 @@
+[Unit]
+Description=Harmonie GRIB download and convert service
+After=network.target syslog.target
+
+[Service]
+# see man systemd.service 
+Type=oneshot
+ExecStart=/usr/bin/docker run --rm --name %n -e KNMI_API_KEY=1234567890abcdef --mount type=bind,source=/srv/data/harmonie/,target=/data dzeuros/grib-download:latest
+StandardOutput=journal

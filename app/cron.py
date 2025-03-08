@@ -15,14 +15,14 @@ TMP_DIR = DATA_DIR / 'tmp'
 
 API_URL = "https://api.dataplatform.knmi.nl/open-data"
 API_KEY = os.getenv('KNMI_API_KEY')
-DATASET_NAME = "harmonie_arome_cy40_p1"
-DATASET_VERSION = "0.2"
+DATASET_NAME = "harmonie_arome_cy43_p1"
+DATASET_VERSION = "1.0"
 
 
 def file_list():
-    yesterday = (datetime.now() - timedelta(days=1)).strftime("%Y%m%d")
+    yesterday = (datetime.now() - timedelta(hours=8)).strftime("%Y%m%d%H")
     req = Request(
-        f"{API_URL}/datasets/{DATASET_NAME}/versions/{DATASET_VERSION}/files?startAfterFilename=harm40_v1_p1_{yesterday}00.tar",
+        f"{API_URL}/datasets/{DATASET_NAME}/versions/{DATASET_VERSION}/files?startAfterFilename=HARM43_V1_P1_{yesterday}.tar",
         headers={"Authorization": API_KEY}
     )
     with urlopen(req) as list_files_response:

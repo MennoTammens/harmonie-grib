@@ -1,0 +1,9 @@
+[Unit]
+Description=Harmonie GRIB download and convert service timer
+
+[Timer]
+OnActiveSec=1min
+OnUnitActiveSec=5min 
+
+[Install]
+WantedBy=timers.target
