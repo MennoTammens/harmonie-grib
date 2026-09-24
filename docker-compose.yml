@@ -1,0 +1,12 @@
+services:
+  indexer:
+    image: mennotammens/grib-tools:latest
+    container_name: harmonie46-grib-indexer
+    restart: unless-stopped
+    volumes:
+      - .:/workspace
+      - ./data:/workspace/data
+    working_dir: /workspace
+    env_file:
+      - .env
+    command: python3 -m app.main

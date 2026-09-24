@@ -2,7 +2,11 @@
 
 import json
 
-from convert import AREAS
+from pathlib import Path
+
+BOUNDS_JSON_PATH = Path(__file__).parent / "bounds.json"
+with open(BOUNDS_JSON_PATH, "r", encoding="utf-8") as f:
+    AREAS = json.load(f)
 
 
 def geojson_feature(feature_type, coordinates, properties=None, **kwargs):

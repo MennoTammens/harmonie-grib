@@ -4,6 +4,7 @@ tmp/*
 ./ggrib
 *.geojson
 *.bz2
+.env
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
