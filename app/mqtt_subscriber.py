@@ -123,6 +123,11 @@ class NotificationSubscriber:
         logger.info("Received notification on topic: %s", message.topic)
         try:
             event = json.loads(payload_str)
-            self.event_callback(event)
         except Exception as e:
             logger.error("Failed to parse incoming notification payload: %s; error: %s", payload_str, e)
+            return
+
+        try:
+            self.event_callback(event)
+        except Exception as e:
+            logger.exception("Error executing event callback: %s", e)

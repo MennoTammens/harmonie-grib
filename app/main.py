@@ -68,11 +68,21 @@ class IndexerService:
         self.subscriber: Optional[NotificationSubscriber] = None
         self._running = False
         self._worker_task: Optional[asyncio.Task] = None
+        self._loop: Optional[asyncio.AbstractEventLoop] = None
 
     def on_mqtt_message(self, event: Dict[str, Any]):
         """Thread-safe enqueue of received event."""
-        loop = asyncio.get_event_loop()
-        loop.call_soon_threadsafe(self.queue.put_nowait, event)
+        loop = self._loop
+        if loop is None:
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                pass
+
+        if loop and loop.is_running():
+            loop.call_soon_threadsafe(self.queue.put_nowait, event)
+        else:
+            logger.error("Cannot enqueue MQTT event: event loop is not available or running.")
 
     def update_latest_symlink(self, target_dir: Path):
         """Atomically point data/latest symlink to the new forecast run directory."""
@@ -258,6 +268,7 @@ class IndexerService:
 
     async def run_daemon(self):
         """Run the service continuously listening for notifications."""
+        self._loop = asyncio.get_running_loop()
         self._running = True
         self._worker_task = asyncio.create_task(self.worker_loop())
 
